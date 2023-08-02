@@ -1,0 +1,13 @@
+name: PermsSystem
+description: PermsSystem fo RealityRift by Crasher508
+version: 1.0
+author: Crasher508
+main: dev.crasher508.permssystem.Main
+api-version: 1.19
+commands:
+  pex:
+    description: Permission command
+    usage: /pex user <username> <addperm|delperm|info|setgroup> <permission|group> /pex group <add|delete|edit|info> <groupname> <addperm|delperm|setdisplayname|setplayerlistname|setchatmessage|setcolor> <value>
+permissions:
+  pex.command:
+    default: op

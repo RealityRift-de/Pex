@@ -1,0 +1,13 @@
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  username: "root"
+  password: ""
+  database: "pex"
+defaultGroupName: "Default"
+defaultGroup:
+  name: "Default"
+  displayStyle: "§6Spieler §8| §6%PLAYER%"
+  playerListStyle: "§6S §8| §6%PLAYER%"
+  chatMessageStyle: "§6Spieler §8| §6%PLAYER% §8| §r%MESSAGE%"
+  color: "6"
