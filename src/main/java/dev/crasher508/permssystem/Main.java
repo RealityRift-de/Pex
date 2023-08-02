@@ -8,6 +8,7 @@ import dev.crasher508.permssystem.listeners.PlayerJoinListener;
 import dev.crasher508.permssystem.listeners.PlayerQuitListener;
 import dev.crasher508.permssystem.provider.MySQL;
 import dev.crasher508.permssystem.provider.MySQLProvider;
+import dev.crasher508.permssystem.utils.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.TabExecutor;
@@ -16,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -34,27 +37,37 @@ public class Main extends JavaPlugin {
 
     private String defaultGroupName = null;
 
+    private Language language;
+
     @Override
     public void onEnable() {
         super.onEnable();
-        this.saveDefaultConfig();
         instance = this;
+        this.saveDefaultConfig();
+        this.saveResource("language.ini", false);
+        File languageFile = new File(this.getDataFolder(), "language.ini");
+        if (!languageFile.exists()) {
+            this.getServer().getPluginManager().disablePlugin(this);
+            this.getLogger().warning("language.ini not found!");
+            return;
+        }
+        language = new Language(languageFile);
         MySQL.connect();
         if (!MySQLProvider.init()) {
             this.getServer().getPluginManager().disablePlugin(this);
-            this.getLogger().warning("Datenbank konnte nicht erstellt werden!");
+            this.getLogger().warning(this.language.get("database.error"));
             return;
         }
         FileConfiguration configuration = this.getConfig();
         String defaultGroupName = configuration.getString("defaultGroupName", "");
         if (defaultGroupName.equals("")) {
             this.getServer().getPluginManager().disablePlugin(this);
-            this.getLogger().warning("Es muss eine Standardgruppe konfiguriert werden!");
+            this.getLogger().warning(this.language.get("database.missing_defaultGroup"));
             return;
         }
         if (!MySQLProvider.getGroupNames().contains(defaultGroupName)) {
             this.getServer().getPluginManager().disablePlugin(this);
-            this.getLogger().warning("Die konfigurierte Standardgruppe existiert nicht!");
+            this.getLogger().warning(this.language.get("database.defaultGroup_not_exist"));
             return;
         }
         this.defaultGroupName = defaultGroupName;
@@ -64,7 +77,7 @@ public class Main extends JavaPlugin {
         TabExecutor tabExecutor = new PexCommand();
         Objects.requireNonNull(this.getCommand("pex")).setExecutor(tabExecutor);
         Objects.requireNonNull(this.getCommand("pex")).setTabCompleter(tabExecutor);
-        Objects.requireNonNull(this.getCommand("pex")).setPermissionMessage(Main.getInstance().getPrefix() + ChatColor.RED + "Du hast nicht die nötigen Berechtigungen!");
+        Objects.requireNonNull(this.getCommand("pex")).setPermissionMessage(this.getPrefix() + this.language.get("no.perms"));
         this.startPlayerListAnimation();
         this.getLogger().warning(ChatColor.BLUE + "Autor: Crasher508 - BETA 1 - wird entfernt!");
     }
@@ -116,7 +129,7 @@ public class Main extends JavaPlugin {
     }
 
     public String getPrefix() {
-        return ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "RealityRift" + ChatColor.DARK_GRAY + "] " + ChatColor.GOLD;
+        return this.language.get("prefix");
     }
 
     public HashMap<String, PermissionAttachment> getAttachments() {
@@ -152,5 +165,9 @@ public class Main extends JavaPlugin {
         }
         this.attachments.put(player.getName(), newAttachment);
         player.recalculatePermissions();
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 }

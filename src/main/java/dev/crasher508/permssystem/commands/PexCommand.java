@@ -23,11 +23,11 @@ public class PexCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(Main.getInstance().getPrefix() + ChatColor.DARK_RED + "Nutze diesen Befehl über den Chat deines Minecraft Clients!");
+            commandSender.sendMessage(Main.getInstance().getPrefix() + Main.getInstance().getLanguage().get("use.ingame"));
             return true;
         }
         if (!player.hasPermission("pex.command")) {
-            player.sendMessage(Main.getInstance().getPrefix() + ChatColor.RED + "Du hast nicht die nötigen Berechtigungen!");
+            player.sendMessage(Main.getInstance().getPrefix() + Main.getInstance().getLanguage().get("no.perms"));
             return true;
         }
         if (strings.length > 0) {
